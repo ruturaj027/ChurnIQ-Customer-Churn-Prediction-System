@@ -18,9 +18,7 @@ ChurnIQ/
 ├── requirements.txt
 ├── README.md
 ├── data/
-│   └── churn_demo.csv
-├── models/
-│   └── .gitkeep
+│   └── churn_dataset.csv
 ├── templates/
 │   └── index.html
 └── static/
