@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ChurnIQ customer churn prediction dashboard">
+  <title>ChurnIQ — Customer Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/">
+        <span class="brand-icon">C</span>
+        <span>Churn<span class="brand-accent">IQ</span><small> CUSTOMER INTELLIGENCE</small></span>
+      </a>
+
+      <div class="side-label">WORKSPACE</div>
+      <a class="nav-item active" href="/"><span class="nav-icon">▦</span> Overview</a>
+      <a class="nav-item" href="#predictor"><span class="nav-icon">⌁</span> Churn predictor</a>
+      <a class="nav-item" href="#how-it-works"><span class="nav-icon">◷</span> Model insights</a>
+
+      <div class="sidebar-bottom">
+        <div class="status-dot"></div>
+        <div><strong>Model workspace</strong><small>Local demo environment</small></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="breadcrumb">Workspace <span>/</span> <strong>Overview</strong></div>
+        <div class="topbar-right"><span class="live-dot"></span> Demo environment <span class="avatar">CQ</span></div>
+      </header>
+
+      <section class="welcome">
+        <div>
+          <p class="eyebrow">CUSTOMER ANALYTICS PLATFORM</p>
+          <h1>Customer churn <span>intelligence.</span></h1>
+          <p class="welcome-copy">Understand customer risk, spot retention opportunities, and make more informed decisions.</p>
+        </div>
+        <div class="date-chip"><span>✦</span> ML-powered insights</div>
+      </section>
+
+      <section class="metric-grid">
+        <article class="metric-card">
+          <div class="metric-top"><span class="metric-icon purple">◎</span><span class="metric-label">PREDICTION ENGINE</span></div>
+          <div class="metric-value">Random Forest</div>
+          <div class="metric-foot"><span class="mini-dot purple-dot"></span> Scikit-learn pipeline</div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-top"><span class="metric-icon blue">⌘</span><span class="metric-label">INPUT FEATURES</span></div>
+          <div class="metric-value">8 <span class="metric-unit">features</span></div>
+          <div class="metric-foot">Customer profile attributes</div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-top"><span class="metric-icon green">↗</span><span class="metric-label">OUTPUT</span></div>
+          <div class="metric-value">Risk score</div>
+          <div class="metric-foot">Probability from 0–100%</div>
+        </article>
+      </section>
+
+      <section class="workspace-grid" id="predictor">
+        <article class="panel form-panel">
+          <div class="panel-heading">
+            <div>
+              <div class="section-kicker"><span class="kicker-line"></span> PREDICTIVE ANALYTICS</div>
+              <h2>Customer risk assessment</h2>
+              <p>Configure a customer profile to generate a churn estimate.</p>
+            </div>
+            <div class="heading-symbol">⌁</div>
+          </div>
+
+          {% if error %}
+          <div class="alert error-alert"><strong>Prediction unavailable</strong><span>{{ error }}</span></div>
+          {% endif %}
+
+          <form method="POST" action="/" id="churn-form">
+            <div class="form-section-title"><span>01</span> CUSTOMER PROFILE</div>
+            <div class="field-grid">
+              <label class="field">
+                <span>Tenure <small>months</small></span>
+                <input type="number" name="tenure" min="0" max="72" value="{{ form.tenure }}" required>
+                <small class="field-hint">How long they have been a customer</small>
+              </label>
+              <label class="field">
+                <span>Monthly charges <small>₹ / billing unit</small></span>
+                <input type="number" name="monthly_charges" min="0" max="200" step="0.01" value="{{ form.monthly_charges }}" required>
+                <small class="field-hint">Recurring monthly service charge</small>
+              </label>
+            </div>
+
+            <div class="form-section-title second-section"><span>02</span> SERVICE & BILLING</div>
+            <div class="field-grid">
+              <label class="field"><span>Contract type</span>
+                <select name="contract">{% for v in ["Month-to-month", "One year", "Two year"] %}<option value="{{ v }}" {% if form.contract == v %}selected{% endif %}>{{ v }}</option>{% endfor %}</select>
+              </label>
+              <label class="field"><span>Internet service</span>
+                <select name="internet_service">{% for v in ["DSL", "Fiber optic", "No"] %}<option value="{{ v }}" {% if form.internet_service == v %}selected{% endif %}>{{ v }}</option>{% endfor %}</select>
+              </label>
+              <label class="field"><span>Tech support</span>
+                <select name="tech_support">{% for v in ["Yes", "No"] %}<option value="{{ v }}" {% if form.tech_support == v %}selected{% endif %}>{{ v }}</option>{% endfor %}</select>
+              </label>
+              <label class="field"><span>Paperless billing</span>
+                <select name="paperless_billing">{% for v in ["Yes", "No"] %}<option value="{{ v }}" {% if form.paperless_billing == v %}selected{% endif %}>{{ v }}</option>{% endfor %}</select>
+              </label>
+              <label class="field"><span>Payment method</span>
+                <select name="payment_method">{% for v in ["Electronic check", "Mailed check", "Bank transfer", "Credit card"] %}<option value="{{ v }}" {% if form.payment_method == v %}selected{% endif %}>{{ v }}</option>{% endfor %}</select>
+              </label>
+              <label class="field"><span>Senior citizen</span>
+                <select name="senior_citizen"><option value="0" {% if form.senior_citizen == "0" %}selected{% endif %}>No</option><option value="1" {% if form.senior_citizen == "1" %}selected{% endif %}>Yes</option></select>
+              </label>
+            </div>
+            <div class="form-actions">
+              <button type="reset" class="reset-button" id="reset-form">Reset</button>
+              <button type="submit" class="primary-button"><span>Generate prediction</span><span class="button-arrow">↗</span></button>
+            </div>
+          </form>
+        </article>
+
+        <aside class="right-column">
+          <article class="panel result-panel">
+            <div class="result-topline"><span class="section-kicker"><span class="kicker-line"></span> MODEL OUTPUT</span><span class="result-icon">✳</span></div>
+            {% if result %}
+              <div class="result-state {% if result.is_churn %}risk-high{% else %}risk-low{% endif %}">
+                <span class="result-state-label">PREDICTION RESULT</span>
+                <h2>{{ result.prediction }}</h2>
+                <p>{% if result.is_churn %}This profile may benefit from a retention review.{% else %}This profile is predicted to remain with the service.{% endif %}</p>
+              </div>
+              <div class="probability-header"><span>Churn probability</span><strong>{{ result.probability }}%</strong></div>
+              <div class="progress-track"><div class="progress-fill {% if result.is_churn %}fill-risk{% endif %}" style="width: {{ result.probability }}%"></div></div>
+              <div class="progress-labels"><span>0% · Low</span><span>100% · High</span></div>
+              <div class="risk-row"><span>Risk classification</span><strong class="risk-badge {{ result.risk|lower }}">{{ result.risk }} risk</strong></div>
+              <div class="result-note"><span>✦</span><p>{% if result.is_churn %}Consider a support check-in or suitable retention offer. Validate actions with business rules.{% else %}Continue monitoring service quality and customer experience.{% endif %}</p></div>
+            {% else %}
+              <div class="empty-result">
+                <div class="gauge-art"><div class="gauge-ring"><span>↗</span></div><i class="spark spark-one">✦</i><i class="spark spark-two">✧</i></div>
+                <h2>Ready when you are</h2>
+                <p>Your customer prediction will appear here once you submit the profile.</p>
+                <div class="empty-steps"><span><b>01</b> Enter customer details</span><span><b>02</b> Generate a risk estimate</span><span><b>03</b> Review the result</span></div>
+              </div>
+            {% endif %}
+          </article>
+
+          <article class="insight-card" id="how-it-works">
+            <div class="insight-icon">✧</div>
+            <div><h3>How it works</h3><p>A trained preprocessing pipeline prepares the customer data before a Random Forest model estimates churn probability.</p></div>
+          </article>
+        </aside>
+      </section>
+
+      <div class="demo-note"><span>ⓘ</span><p><strong>Demo data notice</strong> This project uses synthetic sample data for learning. Predictions are estimates, not guarantees or production-ready business decisions.</p></div>
+      <footer><span>© 2026 ChurnIQ · Customer Intelligence</span><span>Built with <strong>Flask</strong> + <strong>scikit-learn</strong></span></footer>
+    </main>
+  </div>
+  <script>
+    document.getElementById("reset-form").addEventListener("click", function () {
+      window.setTimeout(function () { document.getElementById("churn-form").querySelector("input[name='tenure']").focus(); }, 0);
+    });
+  </script>
+</body>
+</html>
